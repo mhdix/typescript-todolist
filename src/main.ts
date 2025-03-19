@@ -15,6 +15,9 @@ const email = document.querySelector<HTMLInputElement>('#email')
 
 const users = document.querySelector<HTMLDivElement>("#user-list")
 
+const userList: Item[] = loadUsers()
+userList.forEach(addUser)
+
 form?.addEventListener('submit', e => {
     e.preventDefault()
 
@@ -25,8 +28,12 @@ form?.addEventListener('submit', e => {
         name: name.value,
         email: email.value,
     }
-    localStorage.setItem('user', JSON.stringify(userItem))
+
+    userList.push(userItem)
     addUser(userItem)
+
+    saveUsers()
+
     name.value = ''
     email.value = ''
 
@@ -44,4 +51,17 @@ function addUser(item: Item) {
     container.append(nameElement, emailElement)
 
     users?.append(container)
+}
+
+
+function saveUsers() {
+    localStorage.setItem('items', JSON.stringify(userList))
+}
+
+function loadUsers(): Item[] {
+    const data = localStorage.getItem('items')
+
+    if (data == null) return []
+    
+    return JSON.parse(data)
 }
